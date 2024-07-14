@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "rootDir": "src",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "types": [
+      "typed-factorio/runtime",
+      "typed-factorio/settings",
+      "typed-factorio/prototype"
+    ],
+    "strict": true
+  },
+  "tstl": {
+    "luaTarget": "5.2" /* Obtained by doing /c game.player.print(_VERSION) in Factorio */
+  }
+}

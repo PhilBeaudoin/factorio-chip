@@ -1,0 +1,9 @@
+{
+  "name": "factorio-chip",
+  "version": "0.1.0",
+  "title": "Chip",
+  "author": "Philippe Beaudoin",
+  "factorio_version": "1.1",
+  "dependencies": ["base >= 1.1", "textplates"],
+  "description": "Design modules and use them to beat factorio."
+}

@@ -1,0 +1,21 @@
+{
+  "name": "factorio-chip",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tstl",
+    "dev": "tstl --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf build",
+    "deploy": "source ./scripts/install.sh"
+  },
+  "dependencies": {
+    "typed-factorio": "^2.12.0"
+  },
+  "devDependencies": {
+    "lua-types": "^2.13.1",
+    "typescript": "^5.5.3",
+    "typescript-to-lua": "^1.26.0"
+  }
+}
