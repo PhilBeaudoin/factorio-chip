@@ -43,7 +43,7 @@ export function destroyOrMine(
   entity: LuaEntity,
   playerIndex: number | undefined,
 ) {
-  if (entity.name === 'character') return
+  if (!entity.valid || entity.name === 'character') return
   const player =
     entity.type === 'item-entity'
       ? game.get_player(playerIndex as PlayerIndex)

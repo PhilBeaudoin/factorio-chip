@@ -4,6 +4,8 @@ import { state } from './state'
 import { onPlayerCreated, onChunkGenerated, onSurfaceCreated } from './events'
 import { gui } from './gui'
 import { clearSurface, generateChunk } from './map'
+import { registerEntitiesWatchLab } from './map/lab'
+import { registerEntitiesWatchNauvis } from './map/nauvis'
 
 let initialized = false
 
@@ -28,9 +30,13 @@ export function init() {
     inventory?.insert({ name: 'burner-mining-drill', count: 10 })
     inventory?.insert({ name: 'stone-furnace', count: 10 })
     inventory?.insert({ name: 'offshore-pump', count: 1 })
+    inventory?.insert({ name: 'transport-belt', count: 500 })
   })
   onSurfaceCreated((e) => clearSurface(game.surfaces[e.surface_index]))
   onChunkGenerated((e) => generateChunk(e))
+
+  registerEntitiesWatchNauvis()
+  registerEntitiesWatchLab()
 }
 
 function isEnabled() {

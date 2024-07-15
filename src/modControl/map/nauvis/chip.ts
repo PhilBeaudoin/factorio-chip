@@ -1,11 +1,7 @@
 import { MapPosition } from 'factorio:runtime'
-import { resetChip } from './chips'
-import { createBusTiles, destroyChunkEntities } from './chunk'
-import { state } from '../state'
-
-export function updateNauvisChunk(chunkPosition: MapPosition) {
-  resetNauvisChip(chunkPosition, undefined)
-}
+import { createBusTiles, destroyChunkEntities } from '../chunk'
+import { resetChip } from '../chips'
+import { state } from '../../state'
 
 export function resetNauvisChip(
   chunkPosition: MapPosition,
@@ -13,7 +9,7 @@ export function resetNauvisChip(
 ) {
   const surface = game.get_surface('nauvis')
   if (!surface) return
-  createBusTiles(surface, chunkPosition, 'dirt-1')
+  createBusTiles(surface, chunkPosition, 'nauvis-bus')
   destroyChunkEntities(surface, chunkPosition, playerIndex)
   const chipIndex = state.getChipAtChunk(chunkPosition)
   const type = chipIndex !== undefined ? state.getChipType(chipIndex) : 'none'

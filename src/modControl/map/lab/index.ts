@@ -1,0 +1,5 @@
+export { updateLabChunk } from './chunk'
+export { writeChipName } from './text'
+export { positionToChipIndex } from './utils'
+export { resetLabChip } from './chip'
+export { registerEntitiesWatchLab } from './entitiesWatch'

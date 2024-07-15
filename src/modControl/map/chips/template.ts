@@ -33,7 +33,7 @@ export function resetChipFromTemplate(
     return
   }
   clearChipEntities(surface, chunkPosition, playerIndex)
-  const busTile = surface.name === 'nauvis' ? 'dirt-1' : 'lab-bus'
+  const busTile = surface.name === 'nauvis' ? 'nauvis-bus' : 'lab-bus'
   const backgroundTile =
     surface.name === 'nauvis' ? 'grass-1' : 'refined-concrete'
   const topLeft = posAdd(posMult(chunkPosition, 32), CHIP_AREA)
@@ -50,9 +50,14 @@ export function resetChipFromTemplate(
   }
 
   surface.set_tiles(tiles, true, false, true, false)
-  entities.forEach((e) =>
-    surface.create_entity({ ...e, move_stuck_players: true }),
-  )
+  entities.forEach((e) => {
+    const entity = surface.create_entity(e)
+    if (entity && surface.name === 'lab') {
+      entity.minable = false
+      entity.destructible = false
+      entity.operable = false
+    }
+  })
   ensureCharactersCanMove(surface, {
     left_top: topLeft,
     right_bottom: posAdd(topLeft, { x: CHIP_AREA.w, y: CHIP_AREA.h }),
