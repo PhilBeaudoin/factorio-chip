@@ -1,4 +1,6 @@
 export * from './generation'
 export { writeChipName, positionToChipIndex, resetLabChip } from './lab'
-export { CHIP_TYPES, resetChip } from './chips'
-export type { ChipType } from './chips'
+export { resetNauvisChip, resetAllNauvisChipsForIndex } from './nauvis'
+export { toChunkPosition } from './chunkMath'
+export { ALL_CHIP_TYPES, CHIP_TYPES, resetChip } from './chips'
+export type { AllChipType, ChipType } from './chips'

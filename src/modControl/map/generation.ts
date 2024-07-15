@@ -1,5 +1,5 @@
 import { LuaSurface, OnChunkGeneratedEvent } from 'factorio:runtime'
-import { toChunkPosition } from './utils'
+import { toChunkPosition } from './chunkMath'
 import { updateNauvisChunk } from './nauvis'
 import { updateLabChunk } from './lab'
 import { debug } from '../debug'

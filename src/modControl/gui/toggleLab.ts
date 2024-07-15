@@ -1,14 +1,8 @@
-import { BaseGuiElement, OnGuiClickEvent } from 'factorio:runtime'
-import {
-  addToRegistry,
-  callAll,
-  createRegistry,
-  onGuiClicked,
-  onPlayerChangedSurface,
-} from '../events'
+import { BaseGuiElement, MapPosition } from 'factorio:runtime'
+import { onGuiClicked, onPlayerChangedSurface } from '../events'
+import { ensureCharactersCanMove } from '../map/entities'
 
 const NAME = 'factorio-chip-ui-toggle-lab'
-const REGISTRY = createRegistry<OnGuiClickEvent>()
 
 export function addToggleLabButton(
   parent: BaseGuiElement,
@@ -22,15 +16,25 @@ export function addToggleLabButton(
     style: 'button',
   })
   button.style.horizontally_stretchable = true
-  onGuiClicked(NAME, playerIndex, (e) => callAll(REGISTRY, e))
+
+  const savedPos: { [surface: string]: MapPosition } = {
+    nauvis: { x: 0, y: 0 },
+    lab: { x: 0.5, y: 0.5 },
+  }
+  onGuiClicked(button.name, playerIndex, () => {
+    const player = game.players[playerIndex]
+    const surface = player.surface.name
+    if (!surface) return
+    savedPos[surface] = player.position
+    const otherSurface = surface === 'nauvis' ? 'lab' : 'nauvis'
+    player.opened = undefined
+    player.teleport(savedPos[otherSurface], otherSurface)
+    ensureCharactersCanMove(game.surfaces[otherSurface])
+  })
   onPlayerChangedSurface(playerIndex, (e) => {
     const player = game.players[e.player_index]
     const name = player.surface.name
     const otherName = name === 'nauvis' ? 'lab' : 'nauvis'
     button.caption = [`controls.factorio-chip-toggle-${otherName}`]
   })
-}
-
-export function onToggleLab(f: (e: OnGuiClickEvent) => void) {
-  return addToRegistry(REGISTRY, f)
 }

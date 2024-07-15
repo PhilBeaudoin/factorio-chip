@@ -1,5 +1,6 @@
+import { addLabChipInfo } from './lab'
+import { addNauvisChipInfo } from './nauvis/nauvisChipInfo'
 import { addToggleLabButton } from './toggleLab'
-import { addChipInfo } from './chipInfo'
 
 const playerInitiated: Record<number, boolean> = {}
 const FRAME_NAME = 'factorio-chip-ui-permanent-frame'
@@ -14,5 +15,6 @@ export function createPermanentFrame(playerIndex: number) {
     direction: 'vertical',
   })
   addToggleLabButton(frame, player.index)
-  addChipInfo(frame, player.index)
+  addNauvisChipInfo(frame, player.index)
+  addLabChipInfo(frame, player.index)
 }

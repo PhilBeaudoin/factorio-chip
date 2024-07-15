@@ -1,44 +1,40 @@
-import { LuaSurface, MapPosition } from 'factorio:runtime'
+import { MapPosition } from 'factorio:runtime'
 import { state } from '../state'
-import { stgs } from '../../modSettings'
 import { write } from './text'
-import {
-  createChipTiles,
-  destroyChunk,
-  destroyChunkObjects,
-  destroyObjectsAt,
-} from './map'
-import { toChunkPosition } from './utils'
+import { toChunkPosition } from './chunkMath'
 import { resetChip } from './chips'
+import { createBusTiles, destroyChunk, destroyChunkEntities } from './chunk'
+import { posAdd, posMult } from './posMath'
+import { destroyEntitiesAt, ensureCharactersCanMove } from './entities'
 
 const NUM_COL = 5
 
 export function updateLabChunk(chunkPosition: MapPosition) {
-  const surface = game.get_surface('lab')
-  if (!surface) return
   const chipIndex = chunkPositionToChipIndex(chunkPosition)
   if (chipIndex === undefined) {
+    const surface = game.get_surface('lab')
+    if (!surface) return
     destroyChunk(surface, chunkPosition, undefined)
-    return
+    const left_top = posMult(chunkPosition, 32)
+    ensureCharactersCanMove(surface, {
+      left_top,
+      right_bottom: posAdd(left_top, { x: 32, y: 32 }),
+    })
+  } else {
+    resetLabChip(chipIndex, undefined)
   }
-  resetChipInternal(surface, chunkPosition, chipIndex, undefined)
 }
 
 export function writeChipName(chipIndex: number) {
   const surface = game.get_surface('lab')
   if (!surface) return
   const { x: cx, y: cy } = chipIndexToChunkPosition(chipIndex)
-  const delta = Math.ceil(stgs.busWidth() / 2) + 1
-  const x = cx * 32 + delta
-  const y = cy * 32 + delta
-  const maxLength = 32 - 2 * delta
-  const area = {
-    left_top: { x, y },
-    right_bottom: { x: x + maxLength, y: y + 1 },
-  }
-  destroyObjectsAt(surface, area, undefined)
-  const name = state.getChipName(chipIndex).slice(0, maxLength)
-  write(surface, cx * 32 + delta, cy * 32 + delta, name)
+  const left_top = { x: cx * 32, y: cy * 32 }
+  const right_bottom = posAdd(left_top, { x: 32, y: 1 })
+  const area = { left_top, right_bottom }
+  destroyEntitiesAt(surface, area, undefined)
+  const name = state.getChipName(chipIndex).slice(0, 32)
+  write(surface, left_top.x, left_top.y, name)
 }
 
 export function chipIndexToChunkPosition(chipIndex: number): MapPosition {
@@ -63,24 +59,6 @@ export function positionToChipIndex(position: MapPosition): number | undefined {
   return chunkPositionToChipIndex(toChunkPosition(position))
 }
 
-function resetChipInternal(
-  surface: LuaSurface,
-  chunkPosition: MapPosition,
-  chipIndex: number,
-  playerIndex: number | undefined,
-) {
-  createChipTiles(
-    surface,
-    chunkPosition,
-    'refined-concrete',
-    'hazard-concrete-left',
-  )
-  destroyChunkObjects(surface, chunkPosition, playerIndex)
-  const type = state.getChipType(chipIndex)
-  resetChip(surface, chunkPosition, type, playerIndex)
-  writeChipName(chipIndex)
-}
-
 export function resetLabChip(
   chipIndex: number,
   playerIndex: number | undefined,
@@ -88,5 +66,9 @@ export function resetLabChip(
   const surface = game.get_surface('lab')
   if (!surface) return
   const chunkPosition = chipIndexToChunkPosition(chipIndex)
-  resetChipInternal(surface, chunkPosition, chipIndex, playerIndex)
+  createBusTiles(surface, chunkPosition, 'lab-bus')
+  destroyChunkEntities(surface, chunkPosition, playerIndex)
+  const type = state.getChipType(chipIndex)
+  resetChip(surface, chunkPosition, type, playerIndex)
+  writeChipName(chipIndex)
 }

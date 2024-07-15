@@ -21,3 +21,9 @@ Factorio mod folder on IOS):
 ```bash
 yarn build && yarn deploy
 ```
+
+To clean-up the build directory:
+
+```bash
+yarn clean
+```

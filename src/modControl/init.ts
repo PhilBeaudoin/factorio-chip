@@ -1,6 +1,5 @@
 import { stgs } from '../modSettings'
 import { debug } from './debug'
-import { teleport } from './teleport'
 import { state } from './state'
 import { onPlayerCreated, onChunkGenerated, onSurfaceCreated } from './events'
 import { gui } from './gui'
@@ -32,8 +31,6 @@ export function init() {
   })
   onSurfaceCreated((e) => clearSurface(game.surfaces[e.surface_index]))
   onChunkGenerated((e) => generateChunk(e))
-
-  teleport.init()
 }
 
 function isEnabled() {

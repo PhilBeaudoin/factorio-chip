@@ -1,17 +1,38 @@
-import { IntSettingDefinition, BoolSettingDefinition } from 'factorio:settings'
+import {
+  IntSettingDefinition,
+  BoolSettingDefinition,
+  BaseSettingDefinition,
+} from 'factorio:settings'
 import { SETTINGS } from './constants'
+import { PlayerIdentification } from 'factorio:runtime'
 
 export function init() {
   data.extend(Object.values(SETTINGS))
 }
 
-function asNumber(def: IntSettingDefinition): number {
-  const val = settings.global[def.name].value
+function getValue(def: BaseSettingDefinition, pid?: PlayerIdentification) {
+  if (def.setting_type === 'startup') return settings.startup[def.name].value
+  else if (def.setting_type === 'runtime-global')
+    return settings.global[def.name].value
+  else
+    return pid !== undefined
+      ? settings.get_player_settings(pid)[def.name].value
+      : undefined
+}
+
+function asNumber(
+  def: IntSettingDefinition,
+  pid?: PlayerIdentification,
+): number {
+  const val = getValue(def, pid)
   return typeof val === 'number' ? val : def.default_value
 }
 
-function asBool(def: BoolSettingDefinition): boolean {
-  const val = settings.global[def.name].value
+function asBool(
+  def: BoolSettingDefinition,
+  pid?: PlayerIdentification,
+): boolean {
+  const val = getValue(def, pid)
   return typeof val === 'boolean' ? val : def.default_value
 }
 
@@ -19,14 +40,6 @@ export function modEnabled(): boolean {
   return asBool(SETTINGS.modEnabled)
 }
 
-export function chipWidth(): number {
-  return asNumber(SETTINGS.chipWidth)
-}
-
-export function chipHeight(): number {
-  return asNumber(SETTINGS.chipHeight)
-}
-
-export function busWidth(): number {
-  return asNumber(SETTINGS.busWidth)
+export function initChipCount(): number {
+  return asNumber(SETTINGS.initChipCount)
 }
