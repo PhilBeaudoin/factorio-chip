@@ -2,7 +2,7 @@ import { state } from '../../state'
 import { destroyEntitiesAt } from '../entities'
 import { posAdd } from '../posMath'
 import { write } from '../text'
-import { chipIndexToChunkPosition } from './utils'
+import { chipIndexToChunkPosition } from './math'
 
 export function writeChipName(chipIndex: number) {
   const surface = game.get_surface('lab')

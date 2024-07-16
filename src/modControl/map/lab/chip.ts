@@ -2,7 +2,7 @@ import { state } from '../../state'
 import { resetChip } from '../chips'
 import { createBusTiles, destroyChunkEntities } from '../chunk'
 import { writeChipName } from './text'
-import { chipIndexToChunkPosition } from './utils'
+import { chipIndexToChunkPosition } from './math'
 
 export function resetLabChip(
   chipIndex: number,

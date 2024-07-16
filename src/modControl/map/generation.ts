@@ -1,7 +1,7 @@
 import { LuaSurface, OnChunkGeneratedEvent } from 'factorio:runtime'
 import { toChunkPosition } from './chunkMath'
-import { updateNauvisChunk } from './nauvis'
-import { updateLabChunk } from './lab'
+import { updateNauvisChunk } from './nauvis/chunk'
+import { updateLabChunk } from './lab/chunk'
 import { debug } from '../debug'
 
 export function clearSurface(surface: LuaSurface) {

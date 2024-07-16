@@ -3,9 +3,7 @@ import { debug } from './debug'
 import { state } from './state'
 import { onPlayerCreated, onChunkGenerated, onSurfaceCreated } from './events'
 import { gui } from './gui'
-import { clearSurface, generateChunk } from './map'
-import { registerEntitiesWatchLab } from './map/lab'
-import { registerEntitiesWatchNauvis } from './map/nauvis'
+import { clearSurface, generateChunk, registerEntitySyncEvents } from './map'
 
 let initialized = false
 
@@ -31,12 +29,18 @@ export function init() {
     inventory?.insert({ name: 'stone-furnace', count: 10 })
     inventory?.insert({ name: 'offshore-pump', count: 1 })
     inventory?.insert({ name: 'transport-belt', count: 500 })
+    inventory?.insert({ name: 'assembling-machine-3', count: 5 })
+    inventory?.insert({ name: 'effectivity-module', count: 20 })
+    inventory?.insert({ name: 'construction-robot', count: 10 })
+    inventory?.insert({ name: 'power-armor-mk2', count: 1 })
+    inventory?.insert({ name: 'personal-roboport-mk2-equipment', count: 1 })
+    inventory?.insert({ name: 'solar-panel-equipment', count: 50 })
+    player.force.research_all_technologies()
   })
   onSurfaceCreated((e) => clearSurface(game.surfaces[e.surface_index]))
   onChunkGenerated((e) => generateChunk(e))
 
-  registerEntitiesWatchNauvis()
-  registerEntitiesWatchLab()
+  registerEntitySyncEvents()
 }
 
 function isEnabled() {

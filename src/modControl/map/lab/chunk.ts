@@ -2,7 +2,7 @@ import { MapPosition } from 'factorio:runtime'
 import { destroyChunk } from '../chunk'
 import { posAdd, posMult } from '../posMath'
 import { ensureCharactersCanMove } from '../entities'
-import { chunkPositionToChipIndex } from './utils'
+import { chunkPositionToChipIndex } from './math'
 import { resetLabChip } from './chip'
 
 export function updateLabChunk(chunkPosition: MapPosition) {
