@@ -1,17 +1,13 @@
-import { TilePrototype } from 'factorio:prototype'
-
-const hazardConcreteLeft = data.raw.tile['hazard-concrete-left']
-const dirt = data.raw.tile['dirt-1']
-if (!hazardConcreteLeft || !dirt) throw new Error('Missing some prototypes')
-
-export const PROTOTYPES = [
-  {
-    ...hazardConcreteLeft,
-    name: 'lab-bus',
-    collision_mask: [...hazardConcreteLeft.collision_mask, 'object-layer'],
-  } satisfies TilePrototype,
-  {
-    ...dirt,
-    name: 'nauvis-bus',
-  } satisfies TilePrototype,
+export const LEGAL_ON_BUS: string[] = [
+  'transport-belt',
+  'splitter',
+  'underground-belt',
+  'electric-pole',
+  'pipe',
+  'pipe-to-ground',
+  'combat-robot',
+  'construction-robot',
+  'logistic-robot',
+  'car',
+  'character',
 ] as const

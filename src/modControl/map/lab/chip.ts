@@ -11,7 +11,7 @@ export function resetLabChip(
   const surface = game.get_surface('lab')
   if (!surface) return
   const chunkPosition = chipIndexToChunkPosition(chipIndex)
-  createBusTiles(surface, chunkPosition, 'lab-bus')
+  createBusTiles(surface, chunkPosition, 'factorio-chip-lab-bus')
   destroyChunkEntities(surface, chunkPosition, playerIndex)
   const type = state.getChipType(chipIndex)
   resetChip(surface, chunkPosition, type, playerIndex)

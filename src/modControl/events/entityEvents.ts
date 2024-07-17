@@ -1,7 +1,6 @@
 import {
   OnBuiltEntityEvent,
   OnEntityDestroyedEvent,
-  OnEntityRenamedEvent,
   OnPlayerMinedEntityEvent,
 } from 'factorio:runtime'
 import { addToRegistry, callAll, createRegistry } from './registry'
@@ -12,14 +11,6 @@ script.on_event(defines.events.on_built_entity, (event) => {
 })
 export function onBuiltEntity(f: (e: OnBuiltEntityEvent) => void) {
   return addToRegistry(BUILT_REGISTRY, f)
-}
-
-const RENAMED_REGISTRY = createRegistry<OnEntityRenamedEvent>()
-script.on_event(defines.events.on_entity_renamed, (event) => {
-  callAll(RENAMED_REGISTRY, event)
-})
-export function onEntityRenamed(f: (e: OnEntityRenamedEvent) => void) {
-  return addToRegistry(RENAMED_REGISTRY, f)
 }
 
 const DESTROYED_REGISTRY = createRegistry<OnEntityDestroyedEvent>()

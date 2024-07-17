@@ -23,6 +23,7 @@ export function syncAssemblingMachines(
     const current = nauvis.get_module_inventory()?.get_contents() ?? {}
     for (const [name, count] of Object.entries(current)) {
       const toRemove = Math.max(count - (request[name] ?? 0), 0)
+      if (toRemove === 0) continue
       nauvis.get_module_inventory()?.remove({ name, count: toRemove })
       player.get_main_inventory()?.insert({ name, count: toRemove })
       current[name] -= toRemove
@@ -30,7 +31,8 @@ export function syncAssemblingMachines(
     const toAdd: { [name: string]: number } = {}
     for (const [name, count] of Object.entries(request)) {
       const toInsert = Math.max(count - (current[name] ?? 0), 0)
-      if (toInsert > 0) toAdd[name] = toInsert
+      if (toInsert === 0) continue
+      toAdd[name] = toInsert
     }
 
     const oldRequestProxy = nauvis.surface.find_entity(

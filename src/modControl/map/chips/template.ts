@@ -33,7 +33,10 @@ export function resetChipFromTemplate(
     return
   }
   clearChipEntities(surface, chunkPosition, playerIndex)
-  const busTile = surface.name === 'nauvis' ? 'nauvis-bus' : 'lab-bus'
+  const busTile =
+    surface.name === 'nauvis'
+      ? 'factorio-chip-nauvis-bus'
+      : 'factorio-chip-lab-bus'
   const backgroundTile =
     surface.name === 'nauvis' ? 'grass-1' : 'refined-concrete'
   const topLeft = posAdd(posMult(chunkPosition, 32), CHIP_AREA)

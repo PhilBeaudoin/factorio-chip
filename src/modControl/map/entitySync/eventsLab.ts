@@ -1,11 +1,12 @@
 import { LuaEntity } from 'factorio:runtime'
-import { toChunkPosition } from '../chunkMath'
-import { syncChipFromLab } from './main'
+import { syncAllChips } from './main'
 
-export function onBuiltEntityLab(entity: LuaEntity, playerIndex: number) {
-  if (!entity.valid || entity.surface.name !== 'lab') return
+export function builtEntityLab(entity: LuaEntity, _playerIndex: number) {
+  if (!entity.valid) return
+  entity.destructible = false
   entity.active = false
-  // Create a ghost of this entity on all the matching nauvis chip
-  const chunkPosition = toChunkPosition(entity.position)
-  syncChipFromLab(chunkPosition, playerIndex)
+}
+
+export function leftLab(playerIndex: number) {
+  syncAllChips(playerIndex)
 }
