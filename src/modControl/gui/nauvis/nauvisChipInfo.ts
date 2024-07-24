@@ -7,40 +7,55 @@ import {
 import { state } from '../../state'
 import { resetNauvisChip, toChunkPosition } from '../../map'
 import { Info, NONE_ITEM } from './info'
-import { addNameDropDown } from './nameDropDown'
-import { getItemsAndIndex } from './items'
+import {
+  addNameDropDown,
+  CHIP_NAME_DROP_DOWN,
+  getDropDownChipIndex,
+  updateNameDropDown,
+} from './nameDropDown'
+
+declare module '../../state/state' {
+  interface PlayerGlobal {
+    nauvisChipInfo?: Info
+  }
+}
 
 export function addNauvisChipInfo(parent: BaseGuiElement, playerIndex: number) {
   const info = updateInfo(playerIndex)
-  const { flow, dropDown } = addNameDropDown(parent, info)
-
-  const updateGui = () => {
-    updateInfo(playerIndex, info)
-    flow.visible = info.valid
-    if (!info.valid) return
-    const { items, selected_index } = getItemsAndIndex(info)
-    dropDown.items = items as string[]
-    dropDown.selected_index = selected_index
-  }
-  const updateChip = () => {
-    if (!info.chunkPosition || dropDown.selected_index < 1) return
-    // -2 ==> -1 for NONE_ITEM, -1 for 0-indexed
-    const chipIndex = dropDown.selected_index - 2
-    state.setChipAtChunk(
-      info.chunkPosition,
-      chipIndex >= 0 ? chipIndex : undefined,
-    )
-    resetNauvisChip(info.chunkPosition, playerIndex)
-    updateGui()
-  }
-  onGuiSelectionStateChanged(dropDown.name, playerIndex, updateChip)
-  onPlayerChangedSurface(playerIndex, updateGui)
-  onPlayerChangedPosition(playerIndex, updateGui)
+  addNameDropDown(parent, info)
+}
+function updateGui(playerIndex: number) {
+  const info = updateInfo(playerIndex)
+  updateNameDropDown(playerIndex, info)
 }
 
-function updateInfo(playerIndex: number, info?: Info): Info {
-  if (!info) info = { valid: false }
+function updateChip(playerIndex: number) {
+  const info = getInfo(playerIndex)
+  if (!info.chunkPosition) return
+  const chipIndex = getDropDownChipIndex(playerIndex)
+  state.setChipAtChunk(
+    info.chunkPosition,
+    chipIndex >= 0 ? chipIndex : undefined,
+  )
+  resetNauvisChip(info.chunkPosition, playerIndex)
+  updateGui(playerIndex)
+}
+
+onGuiSelectionStateChanged(CHIP_NAME_DROP_DOWN, (e) =>
+  updateChip(e.player_index),
+)
+onPlayerChangedSurface((e) => updateGui(e.player_index))
+onPlayerChangedPosition((e) => updateGui(e.player_index))
+
+const getInfo = (playerIndex: number): Info => {
+  const pg = state.getPlayerGlobal(playerIndex)
+  if (!pg.nauvisChipInfo) pg.nauvisChipInfo = { valid: false }
+  return pg.nauvisChipInfo
+}
+
+function updateInfo(playerIndex: number): Info {
   const player = game.players[playerIndex]
+  const info = getInfo(playerIndex)
   if (player?.surface.name !== 'nauvis') {
     info.valid = false
     return info

@@ -7,4 +7,5 @@ export { toChunkPosition } from './chunkMath'
 export { ALL_CHIP_TYPES, CHIP_TYPES, resetChip } from './chips'
 export type { AllChipType, ChipType } from './chips'
 export { destroyOrMine } from './entities'
-export { registerEntitySyncEvents } from './entitySync/events'
+// Required to run event listeners
+export * from './entitySync/events'

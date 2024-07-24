@@ -2,22 +2,40 @@ import { MapPosition } from 'factorio:runtime'
 import { stgs } from '../../modSettings'
 import { ChipType } from '../map'
 
-declare const global: {
+export interface PlayerGlobal {}
+
+interface Global {
   chip_names: string[]
   chip_types: ChipType[]
   chip_indexes: { [pos: string]: number }
+  players: Record<number, PlayerGlobal>
 }
 
+declare const global: Global
+
+const globalInitFunctions: (() => void)[] = []
+export function addGlobalInit(f: () => void) {
+  globalInitFunctions.push(f)
+}
+const globalInitPlayerFunctions: ((playerIndex: number) => void)[] = []
+export function addGlobalInitPlayer(f: (playerIndex: number) => void) {
+  globalInitPlayerFunctions.push(f)
+}
+
+// Using a global variable not in global only for debugging purposes
 let initialized = false
 
 export function init() {
-  if (initialized) return
+  if (initialized) throw new Error('state.ts: Already initialized')
   initialized = true
 
   global.chip_names = []
   setNumChips(stgs.initChipCount())
   global.chip_types = []
   global.chip_indexes = {}
+  global.players = {}
+
+  globalInitFunctions.forEach((f) => f())
 }
 
 export const getNumChips = () => global.chip_names.length
@@ -74,4 +92,9 @@ export const getChunksForChipIndex = (chipIndex: number): MapPosition[] => {
     }
   }
   return pos
+}
+
+export const getPlayerGlobal = (playerIndex: number): PlayerGlobal => {
+  if (!global.players[playerIndex]) global.players[playerIndex] = {}
+  return global.players[playerIndex]
 }

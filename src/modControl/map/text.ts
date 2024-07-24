@@ -1,27 +1,35 @@
 import { LuaSurface } from 'factorio:runtime'
 import { debug } from '../debug'
+import { Global } from '../state/state'
 
-let initialized = false
-const charToIndex: { [key: string]: number } = {}
+declare module '../state/state' {
+  interface Global {
+    charToIndex?: { [char: string]: number }
+  }
+}
+
+declare const global: Global
 
 const ENTITY_NAME = 'textplate-small-iron'
 
-interface TpDict {
+interface TextplatesDict {
   name: string
   symbols: { [key: number]: string }
 }
 
-type TpCharDict = { [key: string]: string }
+type TextplatesCharDict = { [key: string]: string }
 
-function init() {
-  if (initialized) return
-  initialized = true
+function getCharToIndex() {
+  if (global.charToIndex) return global.charToIndex
 
-  const dicts = remote.call('textplates', 'textplates_add_types') as TpDict[]
+  const dicts = remote.call(
+    'textplates',
+    'textplates_add_types',
+  ) as TextplatesDict[]
   const symbols = dicts.find((v: any) => v.name === ENTITY_NAME)?.symbols
   if (!symbols) {
     debug(`No textplate symbols found for ${ENTITY_NAME}`)
-    return
+    return {}
   }
   const symbolToIndex: { [key: string]: number } = {}
   for (const [k, v] of Object.entries(symbols)) symbolToIndex[v] = parseInt(k)
@@ -29,15 +37,16 @@ function init() {
   const charToSymbol = remote.call(
     'textplates',
     'textplates_add_characters_for_symbols',
-  ) as TpCharDict
+  ) as TextplatesCharDict
 
+  global.charToIndex = {}
   for (const [k, v] of Object.entries(charToSymbol)) {
-    if (v in symbolToIndex) charToIndex[k] = symbolToIndex[v]
+    if (v in symbolToIndex) global.charToIndex[k] = symbolToIndex[v]
   }
+  return global.charToIndex
 }
 
 export function write(surface: LuaSurface, x: number, y: number, text: string) {
-  init()
   const entities = surface.find_entities_filtered({
     area: {
       left_top: { x, y },
@@ -51,6 +60,7 @@ export function write(surface: LuaSurface, x: number, y: number, text: string) {
 
 function writeChar(surface: LuaSurface, x: number, y: number, char: string) {
   if (char === ' ') return
+  const charToIndex = getCharToIndex()
   let index = charToIndex[char.toLowerCase()]
   if (!index) index = 1
   const entity = surface.create_entity({

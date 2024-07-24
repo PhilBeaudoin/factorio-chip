@@ -4,20 +4,7 @@ import {
   OnPlayerCreatedEvent,
   OnPlayerDiedEvent,
 } from 'factorio:runtime'
-import { addToRegistry, callAll, createRegistry, Registry } from './registry'
-import { optionalNumber } from './utils'
-
-function onGeneric<T extends { player_index: number }>(
-  registry: Registry<T>,
-  p1: number | ((e: T) => void),
-  p2?: (e: T) => void,
-) {
-  const { n: playerIndex, f } = optionalNumber(p1, p2)
-  if (playerIndex === undefined) return addToRegistry(registry, f)
-  return addToRegistry(registry, (e) => {
-    if (e.player_index === playerIndex) f(e)
-  })
-}
+import { callAll, createRegistry, onPlayerEvent } from './registry'
 
 const CREATED_REGISTRY = createRegistry<OnPlayerCreatedEvent>()
 script.on_event(defines.events.on_player_created, (event) => {
@@ -34,7 +21,7 @@ export function onPlayerCreated(
   p1: number | ((e: OnPlayerCreatedEvent) => void),
   p2?: (e: OnPlayerCreatedEvent) => void,
 ) {
-  return onGeneric(CREATED_REGISTRY, p1, p2)
+  return onPlayerEvent(CREATED_REGISTRY, p1, p2)
 }
 
 const DIED_REGISTRY = createRegistry<OnPlayerDiedEvent>()
@@ -50,7 +37,7 @@ export function onPlayerDied(
   p1: number | ((e: OnPlayerDiedEvent) => void),
   p2?: (e: OnPlayerDiedEvent) => void,
 ) {
-  return onGeneric(DIED_REGISTRY, p1, p2)
+  return onPlayerEvent(DIED_REGISTRY, p1, p2)
 }
 
 const CHANGED_SURFACE_REGISTRY = createRegistry<OnPlayerChangedSurfaceEvent>()
@@ -68,7 +55,7 @@ export function onPlayerChangedSurface(
   p1: number | ((e: OnPlayerChangedSurfaceEvent) => void),
   p2?: (e: OnPlayerChangedSurfaceEvent) => void,
 ) {
-  return onGeneric(CHANGED_SURFACE_REGISTRY, p1, p2)
+  return onPlayerEvent(CHANGED_SURFACE_REGISTRY, p1, p2)
 }
 
 const CHANGED_POSITION_REGISTRY = createRegistry<OnPlayerChangedPositionEvent>()
@@ -86,5 +73,5 @@ export function onPlayerChangedPosition(
   p1: number | ((e: OnPlayerChangedPositionEvent) => void),
   p2?: (e: OnPlayerChangedPositionEvent) => void,
 ) {
-  return onGeneric(CHANGED_POSITION_REGISTRY, p1, p2)
+  return onPlayerEvent(CHANGED_POSITION_REGISTRY, p1, p2)
 }

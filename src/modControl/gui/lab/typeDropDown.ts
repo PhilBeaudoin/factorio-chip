@@ -1,15 +1,18 @@
 import { BaseGuiElement, LocalisedString } from 'factorio:runtime'
 import { Info } from './info'
 import { CHIP_TYPES } from '../../map'
+import { findGui } from '../util'
 
-const FLOW_NAME = 'factorio-chip-ui-type-drop-down-flow'
-const LABEL_NAME = 'factorio-chip-ui-type-drop-down-label'
-const DROP_DOWN_NAME = 'factorio-chip-ui-type-drop-down-drop-down'
+const FLOW = 'factorio-chip-ui-type-drop-down-flow'
+const LABEL = 'factorio-chip-ui-type-drop-down-label'
+const DROP_DOWN = 'factorio-chip-ui-type-drop-down-drop-down'
+
+export const CHIP_TYPE_DROP_DOWN = DROP_DOWN
 
 export function addTypeDropDown(parent: BaseGuiElement, info: Info) {
   const flow = parent.add({
     type: 'flow',
-    name: FLOW_NAME,
+    name: FLOW,
     direction: 'horizontal',
     style: 'player_input_horizontal_flow',
     visible: info.valid,
@@ -22,16 +25,29 @@ export function addTypeDropDown(parent: BaseGuiElement, info: Info) {
   ]
   flow.add({
     type: 'label',
-    name: LABEL_NAME,
+    name: LABEL,
     caption,
   })
   const chipType = info.chipType || 'empty'
   const dropDown = flow.add({
     type: 'drop-down',
-    name: DROP_DOWN_NAME,
+    name: DROP_DOWN,
     items: CHIP_TYPES as any,
     selected_index: CHIP_TYPES.indexOf(chipType) + 1,
   })
   dropDown.style.horizontally_stretchable = true
-  return { flow, dropDown }
+}
+
+export function updateTypeDropDown(playerIndex: number, info: Info) {
+  const flow = findGui(FLOW, 'flow', playerIndex)
+  flow && (flow.visible = info.valid)
+  const dropDown = findGui(DROP_DOWN, 'drop-down', playerIndex)
+  if (!info.valid || !dropDown) return
+  const chipType = info.chipType || 'empty'
+  dropDown.selected_index = CHIP_TYPES.indexOf(chipType) + 1
+}
+
+export function getDropDownChipType(playerIndex: number) {
+  const dropDown = findGui(DROP_DOWN, 'drop-down', playerIndex)
+  return CHIP_TYPES[(dropDown?.selected_index ?? 1) - 1]
 }
