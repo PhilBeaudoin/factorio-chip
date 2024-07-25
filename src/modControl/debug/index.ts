@@ -5,6 +5,7 @@ const FILE = 'factorio-chip.log'
 let firstDebug = false
 
 export function debug(msg: string, fileOnly: boolean = false) {
+  if (!game) return
   if (!firstDebug) game.write_file(FILE, '\n\n---------------\n\n', true)
   firstDebug = true
   game.write_file(FILE, msg + '\n', true)

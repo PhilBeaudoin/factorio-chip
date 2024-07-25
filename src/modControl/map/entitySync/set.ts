@@ -1,5 +1,6 @@
 import { LuaEntity, MapPosition } from 'factorio:runtime'
 import { posSub } from '../posMath'
+import { mismatchedBelts } from './utils'
 
 function entityToKey(entity: LuaEntity, topLeft: MapPosition): string {
   const name = entity.name === 'entity-ghost' ? entity.ghost_name : entity.name
@@ -32,8 +33,16 @@ export function compareMaps(lab: EntityMap, nauvis: EntityMap): MapDiff {
   const matching: [LuaEntity, LuaEntity][] = []
 
   for (const key in lab) {
-    if (!nauvis[key]) missing.push(lab[key])
-    else matching.push([lab[key], nauvis[key]])
+    const labEntity = lab[key]
+    const nauvisEntity = nauvis[key]
+    if (!nauvisEntity) {
+      missing.push(labEntity)
+    } else if (mismatchedBelts(labEntity, nauvisEntity)) {
+      missing.push(labEntity)
+      extra.push(nauvisEntity)
+    } else {
+      matching.push([labEntity, nauvisEntity])
+    }
   }
 
   for (const key in nauvis) if (!lab[key]) extra.push(nauvis[key])

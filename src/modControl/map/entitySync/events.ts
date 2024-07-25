@@ -8,6 +8,8 @@ import { builtEntityLab, leftLab } from './eventsLab'
 import { builtEntityNauvis, minedEntityNauvis } from './eventsNauvis'
 import { syncQueued } from './main'
 
+////// EVENTS //////
+
 onEachTick(() => syncQueued())
 
 onBuiltEntity((e) => {

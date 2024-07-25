@@ -26,6 +26,22 @@ export function addToggleLabButton(
   button.style.horizontally_stretchable = true
 }
 
+const getSavedPos = (playerIndex: number, surface: string) => {
+  const playerGlobal = state.getPlayerGlobal(playerIndex)
+  return playerGlobal.savedPos?.[surface] ?? { x: 0, y: 0 }
+}
+const setSavedPos = (
+  playerIndex: number,
+  surface: string,
+  pos: MapPosition,
+) => {
+  const playerGlobal = state.getPlayerGlobal(playerIndex)
+  playerGlobal.savedPos = playerGlobal.savedPos || {}
+  playerGlobal.savedPos[surface] = pos
+}
+
+////// EVENTS //////
+
 onGuiClicked(NAME, (e) => {
   const player = game.players[e.player_index]
   const surface = player.surface.name
@@ -45,17 +61,3 @@ onPlayerChangedSurface((e) => {
   const otherName = name === 'nauvis' ? 'lab' : 'nauvis'
   button.caption = [`controls.factorio-chip-toggle-${otherName}`]
 })
-
-const getSavedPos = (playerIndex: number, surface: string) => {
-  const playerGlobal = state.getPlayerGlobal(playerIndex)
-  return playerGlobal.savedPos?.[surface] ?? { x: 0, y: 0 }
-}
-const setSavedPos = (
-  playerIndex: number,
-  surface: string,
-  pos: MapPosition,
-) => {
-  const playerGlobal = state.getPlayerGlobal(playerIndex)
-  playerGlobal.savedPos = playerGlobal.savedPos || {}
-  playerGlobal.savedPos[surface] = pos
-}

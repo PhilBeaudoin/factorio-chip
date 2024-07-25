@@ -16,6 +16,7 @@ export function syncMathingEntities(
   nauvis: LuaEntity,
   player: LuaPlayer,
 ) {
+  nauvis.orientation = lab.orientation
   nauvis.direction = lab.direction
   const f = SYNC_FUNCTIONS[lab.type]
   if (f !== undefined) f(lab, nauvis, player)

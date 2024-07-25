@@ -1,6 +1,7 @@
 import { LuaSurface, MapPosition, TileWrite } from 'factorio:runtime'
 import { isOnBus, iterateOnChunk } from './chunkMath'
 import { destroyOrMine } from './entities'
+import { LEGAL_ON_BUS } from '../../modData/constants'
 
 export function destroyChunk(
   surface: LuaSurface,
@@ -26,7 +27,9 @@ export function destroyChunkEntities(
     right_bottom: { x: cx * 32 + 32, y: cy * 32 + 32 },
   }
   surface.destroy_decoratives({ area })
-  surface.find_entities(area).forEach((e) => destroyOrMine(e, playerIndex))
+  surface
+    .find_entities_filtered({ area, type: LEGAL_ON_BUS, invert: true })
+    .forEach((e) => destroyOrMine(e, playerIndex))
 }
 
 export function createBusTiles(

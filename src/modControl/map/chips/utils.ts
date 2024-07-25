@@ -1,6 +1,7 @@
 import { LuaSurface, MapPosition } from 'factorio:runtime'
 import { CHIP_AREA } from '../../constants'
 import { destroyOrMine } from '../entities'
+import { LEGAL_ON_BUS } from '../../../modData/constants'
 
 export function toChipPos(
   x: number,
@@ -42,6 +43,8 @@ export const clearChipEntities = (
       left_top: { x: cx * 32 + x, y: cy * 32 + y },
       right_bottom: { x: cx * 32 + x + w, y: cy * 32 + y + h },
     },
+    type: surface.name === 'nauvis' ? LEGAL_ON_BUS : [],
+    invert: true,
   })
   entities.forEach((e) => destroyOrMine(e, playerIndex))
 }

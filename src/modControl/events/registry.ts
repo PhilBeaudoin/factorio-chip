@@ -1,5 +1,6 @@
 import { LuaGuiElement } from 'factorio:runtime'
 import { optionalNumber } from './utils'
+import { isModEnabled } from '../utils'
 
 type Func<T> = (e: T) => void
 
@@ -14,6 +15,7 @@ export const addToRegistry = <T>(
   registry: Registry<T>,
   f: Func<T>,
 ): (() => void) => {
+  if (!isModEnabled()) return () => {}
   const id = uid++
   registry[id] = f
   return () => delete registry[id]

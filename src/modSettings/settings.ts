@@ -43,3 +43,7 @@ export function modEnabled(): boolean {
 export function initChipCount(): number {
   return asNumber(SETTINGS.initChipCount)
 }
+
+export function startWithRobots(): boolean {
+  return asBool(SETTINGS.startWithRobots)
+}

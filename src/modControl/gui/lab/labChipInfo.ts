@@ -72,24 +72,6 @@ function updateChipType(playerIndex: number) {
   commitChipNameAndUpdate(playerIndex)
 }
 
-onGuiClicked(CHIP_RENAME_BUTTON, (e) => {
-  const playerIndex = e.player_index
-  const info = getInfo(playerIndex)
-  if (info.editing) commitChipNameAndUpdate(playerIndex)
-  else {
-    info.editing = true
-    updateGui(playerIndex)
-    focusTextField(playerIndex)
-  }
-})
-
-onGuiSelectionStateChanged(CHIP_TYPE_DROP_DOWN, (e) =>
-  updateChipType(e.player_index),
-)
-onGuiConfirmed(CHIP_TEXT_FIELD, (e) => commitChipNameAndUpdate(e.player_index))
-onPlayerChangedSurface((e) => commitChipNameAndUpdate(e.player_index))
-onPlayerChangedPosition((e) => commitChipNameAndUpdate(e.player_index))
-
 const getInfo = (playerIndex: number): Info => {
   const pg = state.getPlayerGlobal(playerIndex)
   if (!pg.labChipInfo) pg.labChipInfo = { valid: false }
@@ -123,3 +105,23 @@ function updateInfo(playerIndex: number): Info {
 
   return info
 }
+
+////// EVENTS //////
+
+onGuiClicked(CHIP_RENAME_BUTTON, (e) => {
+  const playerIndex = e.player_index
+  const info = getInfo(playerIndex)
+  if (info.editing) commitChipNameAndUpdate(playerIndex)
+  else {
+    info.editing = true
+    updateGui(playerIndex)
+    focusTextField(playerIndex)
+  }
+})
+
+onGuiSelectionStateChanged(CHIP_TYPE_DROP_DOWN, (e) =>
+  updateChipType(e.player_index),
+)
+onGuiConfirmed(CHIP_TEXT_FIELD, (e) => commitChipNameAndUpdate(e.player_index))
+onPlayerChangedSurface((e) => commitChipNameAndUpdate(e.player_index))
+onPlayerChangedPosition((e) => commitChipNameAndUpdate(e.player_index))

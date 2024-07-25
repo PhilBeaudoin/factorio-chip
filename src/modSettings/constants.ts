@@ -15,4 +15,10 @@ export const SETTINGS = {
     minimum_value: 1,
     maximum_value: 10,
   } satisfies IntSettingDefinition,
+  startWithRobots: {
+    type: 'bool-setting',
+    name: 'factorio-chip-start-with-robots',
+    setting_type: 'runtime-global',
+    default_value: true,
+  } satisfies BoolSettingDefinition,
 } as const

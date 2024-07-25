@@ -1,4 +1,5 @@
 import {
+  LuaEntity,
   LuaForce,
   LuaPlayer,
   LuaSurface,
@@ -13,6 +14,7 @@ import { compareMaps, entitiesToMap, EntityMap } from './set'
 import { destroyOrMine } from '../entities'
 import { syncMathingEntities } from './typeSync'
 import { LEGAL_ON_BUS } from '../../../modData/constants'
+import { isInputBelt, isOutputBelt } from './utils'
 
 export function syncAllChips(playerIndex: number) {
   for (let i = 0; i < state.getNumChips(); i++) syncChipFromLab(i, playerIndex)
@@ -80,17 +82,22 @@ function syncChipOnNauvis({
     false,
   )
   const { missing, extra, matching } = compareMaps(labMap, nauvisMap)
+  fixUndergroundBelts(missing)
 
   for (const entity of extra) destroyOrMine(entity, player.index)
 
   for (const entity of missing) {
     const relPos = posSub(entity.position, labChunkTopLeft)
     const newPos = posAdd(nauvisChunkTopLeft, relPos)
+    const direction = isOutputBelt(entity)
+      ? (entity.direction + 4) % 8
+      : entity.direction
     const ghost = nauvis.create_entity({
       name: 'entity-ghost',
       inner_name: entity.name,
       position: newPos,
-      direction: entity.direction,
+      direction,
+      orientation: entity.orientation,
       force: player.force,
       player: player,
     })
@@ -123,6 +130,15 @@ function findEntities(
       return true
     })
   return entitiesToMap(entities, chunkTopLeft)
+}
+
+function fixUndergroundBelts(entities: LuaEntity[]) {
+  const moveToBack: number[] = []
+  for (const [i, entity] of entities.entries())
+    if (isInputBelt(entity)) moveToBack.push(i)
+  moveToBack.reverse()
+  for (const i of moveToBack) entities.push(entities[i])
+  for (const i of moveToBack) entities.splice(i, 1)
 }
 
 interface SyncInfo {

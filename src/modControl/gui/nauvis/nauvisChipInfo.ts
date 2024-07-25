@@ -41,12 +41,6 @@ function updateChip(playerIndex: number) {
   updateGui(playerIndex)
 }
 
-onGuiSelectionStateChanged(CHIP_NAME_DROP_DOWN, (e) =>
-  updateChip(e.player_index),
-)
-onPlayerChangedSurface((e) => updateGui(e.player_index))
-onPlayerChangedPosition((e) => updateGui(e.player_index))
-
 const getInfo = (playerIndex: number): Info => {
   const pg = state.getPlayerGlobal(playerIndex)
   if (!pg.nauvisChipInfo) pg.nauvisChipInfo = { valid: false }
@@ -70,3 +64,11 @@ function updateInfo(playerIndex: number): Info {
 
   return info
 }
+
+////// EVENTS //////
+
+onGuiSelectionStateChanged(CHIP_NAME_DROP_DOWN, (e) =>
+  updateChip(e.player_index),
+)
+onPlayerChangedSurface((e) => updateGui(e.player_index))
+onPlayerChangedPosition((e) => updateGui(e.player_index))
