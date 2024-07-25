@@ -122,9 +122,10 @@ function findEntities(
       if (e.name === 'character') return false
       if (noGhosts && e.name === 'entity-ghost') return false
       if (
-        LEGAL_ON_BUS.includes(e.type) &&
         surface.get_tile(e.position.x, e.position.y).name ===
-          'factorio-chip-nauvis-bus'
+          'factorio-chip-nauvis-bus' &&
+        (LEGAL_ON_BUS.includes(e.type) ||
+          (e.name === 'entity-ghost' && LEGAL_ON_BUS.includes(e.ghost_type)))
       )
         return false
       return true
